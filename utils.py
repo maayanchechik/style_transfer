@@ -52,9 +52,6 @@ prep = transforms.Compose([transforms.Resize(img_size),
                            transforms.Normalize(mean=[0.40760392, 0.45795686, 0.48501961], #subtract imagenet mean
                                             std=[1,1,1]),
                            transforms.Lambda(lambda x: x.mul_(255)),])
-prep_no_changes = transforms.Compose([transforms.Resize(img_size),
-                           transforms.ToTensor(),
-])
 
 postpa = transforms.Compose([transforms.Lambda(lambda x: x.mul_(1./255)),
                              transforms.Normalize(mean=[-0.40760392, -0.45795686, -0.48501961], #add imagenet mean
@@ -63,10 +60,6 @@ postpa = transforms.Compose([transforms.Lambda(lambda x: x.mul_(1./255)),
                              ])
 postpb = transforms.Compose([transforms.ToPILImage()])
 
-def content_image_pre_training(content_img):
-    content_torch = prep_no_changes(content_img)
-    content_torch = Variable(content_torch.unsqueeze(0).cuda())
-    return content_torch
     
 def postp(tensor,WITH_CHANGES): # to clip results in the range [0,1]
     if WITH_CHANGES:
@@ -155,18 +148,8 @@ def show_stylized_image(stylized_img,i,dir_name):
         os.mkdir(path_name)
     final_path_name = path_name+"/pic"+str(i)+".png"
     out_img.save(final_path_name)
+    return final_path_name
     
-def save_pre_training_images(stylized_img,i,dir_name):
-    out_img = postp(stylized_img.data[0].cpu().squeeze(),False)
-#    plt.imshow(out_img)
-#    plt.gcf().set_size_inches(10,10)
-#    plt.show()
-    path_name = "/home/mc/StyleTransfer/"+dir_name
-    if not os.path.exists(path_name):
-        os.mkdir(path_name)
-    final_path_name = path_name+"/pic"+str(i)+".png"
-    out_img.save(final_path_name)
-
 def save_loss_file(file_name,train_losses):
     loss_file = open(file_name,"wb")
     pickle.dump(train_losses,loss_file)

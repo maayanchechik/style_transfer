@@ -38,7 +38,7 @@ batch_size_ = 1
 
 
 ################################################################################################
-"""#pretraining"""
+"""#pretraining the net to be the identity network"""
 ################################################################################################
 
 def pre_train(optimizer, model, nepochs, train_loader,dir_name,saved_test_images_counter,content_image):
